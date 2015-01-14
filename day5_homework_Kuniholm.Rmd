@@ -1,0 +1,125 @@
+---
+title: "Day 5 Homework"
+output: html_document
+---
+
+0. Start out by getting your data into "long" format.  This will help with some of the following.
+
+```{r}
+
+load("Mydata.Rda")
+library(reshape2)
+library(ggplot2)
+
+Mymelt <- melt(Mydata)
+
+# note this melts only the numeric variables and leaves the character and factor variables as ID
+
+```
+
+1. Pick a single numerical variable from your data.  Use `ggplot` to plot a histogram and a density plot (separately).
+   - Try some different values for `binwidth` for the histogram.
+   - Try some different values for `adjust` for the density plot.
+   
+```{r}
+colnames(Mydata)
+ggplot(Mydata, aes(Child_Mortality)) + geom_histogram()
+ggplot(Mydata, aes(Child_Mortality)) + geom_histogram(binwidth = .5)
+ggplot(Mydata, aes(Child_Mortality)) + geom_histogram(binwidth = 10)
+
+ggplot(Mydata, aes(Child_Mortality)) + geom_density()
+ggplot(Mydata, aes(Child_Mortality)) + geom_density(adjust = .5)
+ggplot(Mydata, aes(Child_Mortality)) + geom_density(adjust = 10)
+
+```
+
+2. How does the distribution look?  Try transforming the variable and try to get it to look more normal (i.e., more Gaussian).  If it already looks normal, do something to it to make it look non-normal.
+
+```{r}
+
+ggplot(Mydata, aes(log(Child_Mortality))) + geom_histogram()
+
+```
+
+
+3. Is there a factor that you can use to break up this variable into groups of observations?  If not, reshape your data so that there is, or create a factor if necessary.  Then, do the following:
+   - Plot it as a density plot, mapping `color` to the factor
+   - Same, but try using `fill` instead of `color`
+   - Same, using `linetype` instead of `color`
+   - Plot the data as a boxplot, with the factor as `x` and the numerical variable as `y`
+
+```{r}
+
+ggplot(Mydata, aes(Child_Mortality, color=factor(Region))) + geom_density()
+ggplot(Mydata, aes(Child_Mortality, fill=factor(Region))) + geom_density()
+ggplot(Mydata, aes(Child_Mortality, linetype=factor(Region))) + geom_density()  
+
+ggplot(Mydata, aes(x=factor(Region), y=Child_Mortality)) + geom_boxplot()
+
+```
+
+
+4. Now let's look at breaking up a histogram across a factor.  With the same variables you used in #3:
+   - Plot a histogram, but use faceting to display them, one above the other.
+   - Try mapping the factor to `color` or `fill`, to see what that looks like.
+   - Which one seems most useful or informative for your data, and why
+   
+   
+```{r}
+
+
+ggplot(Mydata, aes(Child_Mortality)) + geom_histogram() + facet_grid(Region ~ .)
+
+
+ggplot(Mydata, aes(Child_Mortality, color=factor(Region))) + geom_histogram() + facet_grid(Region~.)
+
+ggplot(Mydata, aes(Child_Mortality, fill=factor(Region))) + geom_histogram() 
+
+#Seems like the facet approach is better so you can actually see the different results. 
+
+```
+
+5. Now find two numerical variables.  You may need to reshape your data.  For example, if you have one numerical variable and a "condition" factor, you could use `dcast` to spread that variable across multiple columns (one per level of the factor).  Once you have two numerical variables:
+   - Create a scatterplot, with one variable mapped to `x` and the other to `y`.
+   - Plot a "loess" smoother on top of the scatterplot
+   - Plot a regression line on top of the scatterplot (instead of the loess)
+
+```{r}
+ggplot(Mydata, aes(GDP_Percapita, Population)) + geom_point() 
+ggplot(Mydata, aes(GDP_Percapita, Population)) + geom_point() + stat_smooth(method = "loess")
+ggplot(Mydata, aes(GDP_Percapita, Population)) + geom_point() + stat_smooth(method=lm, size = 1.5)
+
+```
+
+
+6. Are there any other factors that split up the variable plotted in #5?  If so try the following:
+   - Map the factor to `color`
+   - Facet by the factor
+```{r}
+
+ggplot(Mydata, aes(GDP_Percapita, Population, color=factor(Region))) + geom_point() 
+ggplot(Mydata, aes(GDP_Percapita, Population, color=factor(Region))) + geom_point() + stat_smooth(method = "loess")
+ggplot(Mydata, aes(GDP_Percapita, Population, color=factor(Region))) + geom_point() + stat_smooth(method=lm, size = 1.5)
+
+```
+
+7. Output all of the plots above as a single PDF.
+
+```{r}
+
+pdf("myplots_homework5_Kuniholm.pdf")
+
+dev.off()
+
+```
+
+
+8. Is there a better type of visualization for your data?  What numbers would you like to be able to visualize better?  Be as explicit as possible, and write some "pseudo-code" to ilustrate what you think you would like.
+
+# I would like to be able to show the t.test and cor values for each country in my data set, and then use them to visualize the outliers in terms of relationships between variables for each country. I think this would be a fairly straightforward process by adding new columns for each new stat combination and then plotting the results. 
+
+9. Save your Markdown document that answers all of these questions (with code) as well as your PDF, and commit them as changes to your git homework repository.  Push those changes to GitHub by Monday morning at 9am.
+
+# Saved as day5_homework_Kuniholm.Rmd  and submitted via email. 
+
+

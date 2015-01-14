@@ -1,0 +1,157 @@
+---
+title: "Day 4 Homework"
+output: html_document
+---
+
+```{r}
+
+Mydata <- read.csv("~/R/r_programming_bsos/UNStats.csv", na.strings="NA, na, .., ...")
+
+```
+
+1. Change the column names of your data to something easier to work with.  If you like your column names, change them into something else reasonable, just for practice.
+
+```{r}
+
+# Changing the column names (could also do one long list, but easier to cut/paste this way:
+names(Mydata)[names(Mydata)=="X"]<- "Country"
+names(Mydata)[names(Mydata)=="Total.population..thousands."]<- "Population"
+names(Mydata)[names(Mydata)=="Share.of.persons.aged.65.years.or.over..percentage."]<- "Per_over_65"
+names(Mydata)[names(Mydata)=="Under.five.mortality..deaths.per.1.000.live.births."]<- "Child_Mortality"
+names(Mydata)[names(Mydata)=="Life.expectancy.at.birth..years."]<- "Life_Expectancy"
+names(Mydata)[names(Mydata)=="Adolescent.fertility.rate..births.per.1.000.women."]<- "Fertility_Rate"
+names(Mydata)[names(Mydata)=="Contracep..tive.prevalence..percent..age."]<- "Contraceptive_Rate"
+names(Mydata)[names(Mydata)=="Urbanization..percentage.of.total.population."]<- "Urbanization"
+names(Mydata)[names(Mydata)=="Gross.domestic.product.at.PPP..interna..tional.dollars.per.capita."]<- "GDP_Percapita"
+names(Mydata)[names(Mydata)=="Poverty..below..1.25..PPP..a.day..percent..age."]<- "Poverty"
+names(Mydata)[names(Mydata)=="Gini.index.b..percent..age."]<- "Gini"
+names(Mydata)[names(Mydata)=="Mean.years.of.schooling..years."]<- "Years_Schooling"
+names(Mydata)[names(Mydata)=="Energy.use..kilograms.of.oil.equivalent.per.capita."]<- "Energy_Use"
+names(Mydata)[names(Mydata)=="Carbon.dioxide.emissions..metric.tons.per.capita."]<- "CO2_Emmissions"
+names(Mydata)[names(Mydata)=="Sulfur.dioxide.emissions..kilograms.per.capita."]<- "SO2_Emmissions"
+names(Mydata)[names(Mydata)=="Particulate.matter.concentra..tion..urban.population.weighted.PM10.micrograms.per.cubic.meter."]<- "PM10_Emmissions"
+head(Mydata)
+
+```
+
+2. List ALL the issues you can see where it looks like your data is being read in a weird way.  If your data looks perfect, find some way to mess it up :-)
+
+```{r}
+
+summary(Mydata)
+str(Mydata)
+
+# The main problem is that what should be numberical values (e.g. national statistics) are being read as factors/characters. I think this is due to decimal places ('.') and less than or equal signs ('<', '='), so I could fix it by using the colClass function to read in all the data as numeric values: 
+
+colnames(Mydata)
+Mydata <- read.csv("~/R/r_programming_bsos/UNStats.csv", header = TRUE, na.strings="NA, na, .. , ...,-")
+
+
+                   
+# Another problem is the ">" and "<" signs, which messes up the data even if it's supposed to be read as numeric values. 
+
+
+```
+
+3. Pick one or two of the most egregious or problematic of the issues in #2 and fix them.
+
+```{r}
+
+# changing all variable columns to numeric (all but "country")
+
+Mydata$Population <- as.numeric(Mydata$Population)
+Mydata$Per_over_65 <- as.numeric(Mydata$Per_over_65)
+Mydata$Child_Mortality <- as.numeric(Mydata$Child_Mortality)
+Mydata$Life_Expectancy <- as.numeric(Mydata$Life_Expectancy)
+Mydata$Fertility_Rate <- as.numeric(Mydata$Fertility_Rate)
+Mydata$Contraceptive_Rate <- as.numeric(Mydata$Contraceptive_Rate)
+Mydata$Urbanization <- as.numeric(Mydata$Urbanization)
+Mydata$GDP_Percapita <- as.numeric(Mydata$GDP_Percapita)
+Mydata$Poverty <- as.numeric(Mydata$Poverty)
+Mydata$Gini <- as.numeric(Mydata$Gini)
+Mydata$Years_Schooling <- as.numeric(Mydata$Years_Schooling)
+Mydata$Energy_Use <- as.numeric(Mydata$Energy_Use)
+Mydata$CO2_Emmissions <- as.numeric(Mydata$CO2_Emmissions)
+Mydata$SO2_Emmissions <- as.numeric(Mydata$SO2_Emmissions)
+Mydata$PM10_Emmissions <- as.numeric(Mydata$PM10_Emmissions)
+
+str(Mydata)
+summary(Mydata)
+str(Mydata)
+
+# To remove the < and > signs: 
+
+by converting everything to numeric above, I have removed all non-numeric signs, leaving values which were originally <1 as just 1. 
+
+```
+
+4. Check for NAs, and report where you see them (try to pinpoint where they are, not just "5 NAs in column seven".
+
+```{r}
+is.na(Mydata)
+
+# There are no NAs in the data set. However, this is incorrect. There should be NAs where there was missing data. When I converted to numeric in the step above all NAs were converted to 1. I don't know how to prevent this. 
+
+```
+
+5. Decide what you think you should do about the NAs, and say why.  If you can, try to implement this decision.
+
+```{r}
+
+# See response above. There are no NAs in the data but there should be. I don't want them removed since they are missing in the original data set. 
+
+```
+
+6. Remove any problematic rows and/or columns.  Say why you want to remove them.  If there aren't any problems, describe why you think there are no problems.
+
+```{r}
+
+# The data set is complete as is. 
+
+```
+
+7. Re-code at least one factor.  Provide a table that shows the correspondence between old levels and new levels.
+
+```{r}
+
+# The only factor variable I have is country name. Since its not necessary to recode the country name, I'll create a new variable: region, and arbitrarily assign 3 regions, then recode the regions to something that makes sense. 
+
+Mydata$Region <- sample(1:3, 199, replace=TRUE)
+Mydata$RegionFactor <- factor(Mydata$Region, labels = c("Region_1", "Region_2", "Region_3"))
+Mydata$RegionFactor
+
+# Then I can recode: 
+
+levels(Mydata$RegionFactor) <- c("Region_North", "Region_South", "Region_East")
+Mydata$RegionFactor
+levels(Mydata$RegionFactor)                              
+                                                  
+```
+
+
+8. Run TWO DIFFERENT simple analyses or statistical tests, such as linear regression (`lm()`), logistic regression (`glm()`), correlation test (`cor.test()`), t-test (`t.test()`), or non-parametric tests (e.g., `wilcox.test()`).  For each of these:
+  - Describe why you are doing this analysis, i.e., what question is it answering?
+  - I won't judge you on statistical expertise!  (though I will make comments if I think I can be helpful)
+  - Report some key statistics from the analysis, using inline code
+
+?cor.test
+
+```{r}
+
+# For example, I could test the strength of correlations between aggregate national population data and indicators of development (e.g. GINI)
+
+colnames(Mydata)
+
+cor.test(Mydata$Population, Mydata$Gini)
+
+  # results: t = 0.6555, df = 197, p-value = 0.5129 alternative hypothesis: true correlation is not equal to 0 95 percent confidence interval:  -0.0930405  0.1845456 sample estimates:        cor 0.04665316 
+
+lmresults <- lm(Mydata$Population~Mydata$GDP_Percapita)
+plot(lmresults)
+
+  # Results in t = 1.952, df = 197, p-value = 0.05236 alternative hypothesis: true correlation is not equal to 0 95 percent confidence interval:  -0.001370831  0.271631105, sample estimates: cor = 0.1377454
+
+```
+
+save(Mydata,file="Mydata.Rda")
+  

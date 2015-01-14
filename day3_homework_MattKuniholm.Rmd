@@ -1,0 +1,140 @@
+---
+title: "Day 3 Homework"
+output: html_document
+---
+
+The goal of this homework is to get practice with manipulating data.
+
+#  My main questions are: 
+  - how to enter new factor columns conditionally based on values in other columns
+  - the use of the dcast function
+  - how to remove all "<" and ">" characters from the entire data.frame
+  
+
+1. Make both a "wide" and a "long" version of your data
+
+```{r}
+
+install.packages("reshape2")
+library(reshape2)
+
+Mydata <- read.csv("UNStats.csv", na.strings = c("NA", "N/A", "n/a", " ", "..", "—"))
+head(Mydata)
+colnames(Mydata)
+str(Mydata2)
+
+#This is to remove the "<" and ">" but I can't get it to work. Is there another way?: 
+gsub(">", "", Mydata)
+gsub("<", "", Mydata)
+
+#Changing the column names (could also do one long list, but easier to cut/paste this way:
+names(Mydata)[names(Mydata)=="X"]<- "Country"
+names(Mydata)[names(Mydata)=="Total.population..thousands."]<- "Population"
+names(Mydata)[names(Mydata)=="Share.of.persons.aged.65.years.or.over..percentage."]<- "%_over_65"
+names(Mydata)[names(Mydata)=="Under.five.mortality..deaths.per.1.000.live.births."]<- "Child_Mortality"
+names(Mydata)[names(Mydata)=="Life.expectancy.at.birth..years."]<- "Life_Expectancy"
+names(Mydata)[names(Mydata)=="Adolescent.fertility.rate..births.per.1.000.women."]<- "Fertility_Rate"
+names(Mydata)[names(Mydata)=="Contracep..tive.prevalence..percent..age."]<- "Contraceptive_Rate"
+names(Mydata)[names(Mydata)=="Urbanization..percentage.of.total.population."]<- "Urbanization"
+names(Mydata)[names(Mydata)=="Gross.domestic.product.at.PPP..interna..tional.dollars.per.capita."]<- "GDP_Percapita"
+names(Mydata)[names(Mydata)=="Poverty..below..1.25..PPP..a.day..percent..age."]<- "Poverty"
+names(Mydata)[names(Mydata)=="Gini.index.b..percent..age."]<- "Gini"
+names(Mydata)[names(Mydata)=="Mean.years.of.schooling..years."]<- "Years_Schooling"
+names(Mydata)[names(Mydata)=="Energy.use..kilograms.of.oil.equivalent.per.capita."]<- "Energy_Use"
+names(Mydata)[names(Mydata)=="Carbon.dioxide.emissions..metric.tons.per.capita."]<- "CO2_Emmissions"
+names(Mydata)[names(Mydata)=="Sulfur.dioxide.emissions..kilograms.per.capita."]<- "SO2_Emmissions"
+names(Mydata)[names(Mydata)=="Particulate.matter.concentra..tion..urban.population.weighted.PM10.micrograms.per.cubic.meter."]<- "PM10_Emmissions"
+head(Mydata)
+
+Widedata <- Mydata
+
+Longdata <- melt(Mydata, id.vars = 1)
+
+```
+
+2. Transform a variable
+
+```{r}
+
+#original data was in thousands, so this converts to actual: 
+
+Mydata$Population_Actual <- Mydata$Population * 1000
+head(Mydata)
+
+```
+
+3. Recode a factor
+
+```{r}
+levels(Mydata$Country)
+Mydata$Country <- factor(Mydata$Affluence, levels = c(1:nrow(Mydata)))
+levels(Mydata$Country) 
+
+```
+
+
+4. Add a new factor, where the levels are conditional on the values of some other variable. E.g., a factor of "high", "medium", and "low" based on thresholds for another variable.
+
+```{r}
+
+Mydata$Affluence <- ifelse(as.numeric(Mydata$Poverty) > 5, as.factor("Poor"), as.factor("Rich"))
+Mydata$Affluence <- factor(Mydata$Affluence, levels = c(1,2), labels = c("Poor", "Wealthy"))
+head(Mydata)
+
+#I'm having trouble with factors vs. characters vs. numeric
+
+#This is how to do it
+
+myris.melt$Dimension[myris.melt$measurement.type %]
+
+
+```
+
+5. Reorder the levels of this new factor
+
+```{r}
+#assuming these were factors it would be: 
+
+Mydata$Affluence <- factor(Mydata$Affluence, levels = c("Wealthy", "Poor"))
+head(Mydata)
+
+```
+
+6. Choose a factor that could be re-coded as multiple dimensions (recall the sepal/petal vs. length/width breakdown). If you don't have one, try to create one.  Now create two (or more) new factors that represent these dimensions.
+
+```{r}
+levels(Widedata$Country)
+Widedata$Region[1:57] <- factor("One")
+Widedata$Region[58:100] <- factor("Two")
+Widedata$Region[101:199] <- factor("Three")
+
+```
+
+
+7. Using `dcast`, aggregate some variable into "cell means" of some kind.
+
+```{r}
+colnames(Longdata)
+MydataCast <- dcast(Longdata, Country ~ variable)
+colnames(Longdata)
+
+```
+
+# note on casting with a LOT of variables
+```{r}
+mydata.wide <- dcast(mydata.long, [80 columns here] ~ split) # instead of having to type all the colnames here, use the following sequence to create a formula to insert those names: 
+
+columns.to.keep <- colnames(mydata.long)[1:80]
+columns.to.keep.pasted <- paste(columns.to.keep, collapse = " + ") # normally you give paste seperate arguments to paste togeter. THe collapse function lets you create one string of col 1 + col 2 etc. THen: 
+my.cast.formula <- as.formula(paste(columns.to.keep.pasted, " ~ split"))
+class(my.cast.formula) # forumla you can use
+mydata.wide <- dcast(mydata.long, formula = my.cast.formula)
+
+
+
+
+```
+
+
+
+8.  Save all of the above in a well-documented R Markdown document.  Email me the .Rmd file (and if you use different or updated data from Day 2 Homework, send that to me, too).

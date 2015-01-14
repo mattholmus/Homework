@@ -1,0 +1,59 @@
+---
+title: "Day 6 Homework"
+output: html_document
+---
+
+1. Think carefully about your data.  Think about something you would like to do multiple times, to subsets of your data.  
+
+```{r}
+
+mydata <- read.csv("UNStats.csv", header=TRUE, na.strings = c("NA","na",".."," .. ","..."," ... ","-"," - ","--"," -- ")) 
+str(mydata)
+mydata
+
+```
+
+
+2. Write out (in plain English, in the notebook) what you are trying to do
+
+# I want to go through each column and remove any unusual characters. Eg. greater than and equal signs. 
+
+3. Write some "pseudo-code" comments in an R chunk, as an outline
+
+-select column number
+-apply sub function
+-add new vector back to data.table
+-create final data.table
+
+4. Write some (real) code that will do what you want ONCE, on one subset of the data.
+
+```{r}
+column <- mydata[["x"]]
+mydatarow1 <- gsub("[[:punct:]]","", mydata[["X"]])
+
+```
+
+5. Copy that code chunk, and convert it into a loop, which will do what you want over all the groups, concatenating the results.
+
+```{r}
+my.answer <- vector(length = 199)
+for(this.column in 1:16){
+    this.vector <- mydata[,mydata$this.counter]
+    my.answer[this.counter] <- gsub("[[:punct:]]","",(this.vector))
+}
+
+```
+
+6. Copy that loop again, and at a condition (`if`) statement to add some further control about ignoring some groups or some other conditional operation.
+
+```{r}
+my.answer <- vector(length = 199)
+for(this.column in 1:16){
+    this.vector <- ifelse(class(mydata$this.column) = c("int", "num"), mydata[,mydata$this.counter], NULL) 
+    my.answer[this.counter] <- gsub("[[:punct:]]","",(this.vector))
+}
+
+# I know something is wrong with this, but can't figure out what. 
+
+```
+
