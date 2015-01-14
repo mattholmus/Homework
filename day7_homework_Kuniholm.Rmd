@@ -1,0 +1,12 @@
+---
+title: "Day 7 Homework"
+output: html_document
+---
+
+1. Work on making progress on your Final Project.
+
+2. Document some road blocks you are running into.
+
+# Some of the challenges I'm finding are (still) how to manage the NAs and unique symbols (<,>, etc), and ensuring that numbers are read as integers/numeric rather than characters. 
+
+3. Email them to me before 7am tomorrow.
