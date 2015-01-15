@@ -1,0 +1,76 @@
+---
+title: "Day 8 Homework"
+output: html_document
+---
+
+```{r}
+library(dplyr)
+
+mydata <- read.csv("UNStats.csv", header=TRUE, na.strings = c("NA","na",".."," .. ","..."," ... ","-"," - ","--"," -- ")) 
+
+colnames(mydata) <- c("country", "population", "elderly", "young", "fertility", "contraceptive", "urbanization", "GDP", "poverty", "Gini", "schooling", "energy", "CO2", "SO2", "P10")
+
+str(mydata)
+
+```
+
+1. Try to recreate the results of Homework 6 (or your intended results) using the `dplyr` functions.
+
+```{r}
+
+# This is what I was trying to do for each column in homework 6
+mydata$ <- gsub("[[:punct:]]","", mydata[["X"]])
+mydata$elderly <- as.numeric(gsub("[[:punct:]]","", mydata$elderly))
+mydata$Gini <- as.numeric(gsub("[[:punct:]]","", mydata$Gini))
+str(mydata)
+# Now all my data is int or num with all symbols removed. 
+
+# Instead, I'll try something new, finding the sd of Gini coefficients: 
+
+mydata <- mutate(mydata, gini_sd = log(Gini), na.rm = FALSE)
+
+str(mydata)
+
+```
+
+
+2. Find another kind of analysis/transformation/summary stat that you want to apply across multiple groups in your data. Use the functions from `reshape2` and `dplyr` to get these results.
+
+```{r}
+
+# I'd like to find the mean poverty rates: 
+colnumber <- ncol(mydata)
+
+arrange(mydata, population, Gini, poverty)
+
+filter(mydata, population > 1000, poverty > 4)
+
+summarize(mydata, mean_poverty = min(poverty))
+
+# For each on of these I get an error: Error in if (any(names2(x) == "")) { :   missing value where TRUE/FALSE needed
+
+# I thought it was due to NAs, but it doesn't change if I toggle na.rm T/F. 
+
+```
+
+3. For more practice, try another example of something like #2 (find another stat or grouping or something).
+
+```{r}
+
+summarize(mydata, mean_poverty = mean(poverty), mean_urban = mean(urban))
+
+# Same error here. 
+
+```
+
+4. Do yet another case of #2 above, but this time throw in a transformation, too.
+
+```{r}
+
+summarize(mydata, log_actpop = log(population*1000)) 
+
+head(mydata)
+
+```
+
+
