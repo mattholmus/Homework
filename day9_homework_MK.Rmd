@@ -63,14 +63,23 @@ mutate(clean, energy_2 = energy/2)
 mtcars
 mutate(mtcars, displ_1 = disp/61.0237)
 
-# so using the mtcars data set, here is a possible function: 
+# so using the mtcars data set, here is a possible function to get a summary table with the mean of all rows in each column if values are not characters: 
 
-addmeans <- function(x){
-  rows <- nrow(x)
-  for(r in rows)
+mean.cols <- function(x){
+    row1 <- colnames(x)
+    columns <- ncol(x)
+  for(c in columns){
+    row2 <- c(1:columns)
+    coltotal <- x$c
+    if (class(coltotal) == !character)  {
+    mean(x$c)
+      } else { NULL }
+    }
+  output <- data.frame(row1, row2)
 }
 
-mtcars
+mean.cols(mtcars)
+
 ```
 
 
