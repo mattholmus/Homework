@@ -1,0 +1,76 @@
+---
+title: "Day 9 Homework"
+output: html_document
+---
+
+1. Write a function to do a bunch of clean-up and formatting to your data.
+
+```{r}
+library(dplyr)
+library(reshape2)
+
+mydata <- read.csv("UNStats.csv", header=TRUE, na.strings = c("NA","na",".."," .. ","..."," ... ","-"," - ","--"," -- "))
+
+colnames(mydata) <- c("country", "population", "elderly", "young", "fertility", "contraceptive", "urbanization", "GDP", "poverty", "Gini", "schooling", "energy", "CO2", "SO2", "P10")
+
+rmsymbol <- function(x) { 
+  columns <- ncol(x)
+  for(i in columns) {
+      x$i <- gsub("[[:punct:]]","", x[["i"]])
+  }
+  rows <- nrow(x)
+  for(r in rows){
+  summarize(x, x$NAs <- anyNA(r,))
+  }
+}
+    
+```
+
+2. Make sure this function works on your data.
+
+3. Get some subset of your data, or find a similar-but-not-identical data set.  Change up the column order.  Re-run your function on this new data.  Does it work?
+
+```{r}
+
+rmsymbol(chickwts)
+
+# no there is something wrong with the nrows function, but can't figure it out.
+
+```
+
+4. Fix your function to be able to work on the new data.
+
+5. Write a function to do some kind of summary stat, and use the `dplyr` functions to run this function over groups of your data.
+
+```{r}
+
+# To start, I would like either to remove all NAs or group by those with and without NAs. I'm trying two ways: 
+rows <- c(1:nrow(mydata))
+summarize(mydata, mydata$NA = anyNA(rows)
+
+# But because the above isn't working, I'll just use: 
+
+clean <- na.omit(mydata)
+
+#then I can add summary stats: 
+
+clean
+is.numeric(clean$energy)
+mutate(clean, energy_2 = energy/2)
+
+# still getting the missing value where TRUE/FALSE needed error I asked about in class. Still not sure why. WHen I use a sample data set with numerical column vectors it works fine. And my clean data set is also numerical columns with no NAs. 
+
+mtcars
+mutate(mtcars, displ_1 = disp/61.0237)
+
+# so using the mtcars data set, here is a possible function: 
+
+addmeans <- function(x){
+  rows <- nrow(x)
+  for(r in rows)
+}
+
+mtcars
+```
+
+
